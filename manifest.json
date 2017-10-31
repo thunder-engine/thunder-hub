@@ -1,10 +1,10 @@
 {
-    "version": 1
+    "version": 1,
     "platforms": {
         "windows": {
-            "eula": true
-            "version": "0.1"
-            "url": ""
+            "eula": true,
+            "version": "0.1",
+            "url": "https://github.com/eprikazchikov/launcher/raw/master/launcher-win.zip",
             "changelog": "\t- Updating mechanism implemented\n\t- New skin for launcher"
         }
     }
