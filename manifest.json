@@ -1,0 +1,11 @@
+{
+    "version": 1
+    "platforms": {
+        "windows": {
+            "eula": true
+            "version": "0.1"
+            "url": ""
+            "changelog": "\t- Updating mechanism implemented\n\t- New skin for launcher"
+        }
+    }
+}
