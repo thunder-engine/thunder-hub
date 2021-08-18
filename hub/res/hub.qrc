@@ -8,7 +8,7 @@
         <file>icons/thunder.svg</file>
         <file>icons/thunderlight.svg</file>
         <file>qml/Sdk.qml</file>
-        <file>versions.json</file>
+        <file>manifest.json</file>
         <file>qml/Library.qml</file>
         <file>qml/Learn.qml</file>
     </qresource>

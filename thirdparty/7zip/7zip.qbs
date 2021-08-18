@@ -3,11 +3,12 @@ import qbs
 Project {
     id: archive
     property stringList srcFiles: [
-        "src/7zip/**/*.cpp"
+        "src/**/*.c",
+        "src/**/*.h",
     ]
 
     property stringList incPaths: [
-
+        "./src"
     ]
 
     StaticLibrary {

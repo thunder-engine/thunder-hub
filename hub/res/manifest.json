@@ -1,0 +1,88 @@
+{
+    "Hub": {
+        "Version": "1.0",
+        "Links": {
+            "Windows": "",
+            "Linux": "",
+            "MacOSX": ""
+        }
+    },
+    "SDK": [
+        {
+            "Version": "2021.1",
+            "Modules": [
+                {
+                    "Name": "Thunder Engine SDK",
+                    "Optional": false,
+                    "Links": {
+                        "Windows": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-windows-x64.7z",
+                        "Linux": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-linux-x86_64.7z",
+                        "MacOSX": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-macosx-x86_64.7z"
+                    }
+                },
+                {
+                    "Name": "Android Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-android.7z"
+                    }
+                },
+                {
+                    "Name": "iOS Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-ios-arm64.7z"
+                    }
+                },
+                {
+                    "Name": "tvOS Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2021.1/ThunderEngine-tvos-arm64.7z"
+                    }
+                }
+            ]
+        },
+        {
+            "Version": "2020.4",
+            "Modules": [
+                {
+                    "Name": "Thunder Engine SDK",
+                    "Optional": false,
+                    "Links": {
+                        "Windows": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-windows-x64.7z",
+                        "Linux": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-linux-x86_64.7z",
+                        "MacOS": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-macosx-x86_64.7z"
+                    }
+                },
+                {
+                    "Name": "Android Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-android.7z"
+                    }
+                },
+                {
+                    "Name": "iOS Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-ios-arm64.7z"
+                    }
+                },
+                {
+                    "Name": "tvOS Libraries",
+                    "Optional": true,
+                    "Links": {
+                        "Common": "https://github.com/thunder-engine/thunder/releases/download/2020.4/ThunderEngine-tvos-arm64.7z"
+                    }
+                }
+            ]
+        }
+    ]
+}
+
+
+
+
+
+

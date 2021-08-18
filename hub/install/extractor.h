@@ -2,29 +2,29 @@
 #define EXTRACTOR_H
 
 #include <QObject>
+#include <QThread>
 
 class Extractor : public QObject {
     Q_OBJECT
 public:
     explicit Extractor(QObject *parent = 0);
+    ~Extractor();
 
-    int extract(const QString &archive_name, const QString &output_path);
+    void extract(const QString archiveName, const QString outputPath);
 
 signals:
-    void threadStarted(int result);
-    void operationExtract(const QString archive_name, const QString output_path);
-    void operationResult(const QString archive_filename, int result);
+    void extractProgress(qint64 filesExtracted, qint64 filesTotal);
+    void extractFinished();
 
-    void extractFileSize(const quint64 filesize);
-    void extractCompleteValue(const quint64 completeValue);
-    void extractingFilename(const QString filename);
-
-public slots:
-    void threadStarted(void);
-    void onExtract(const QString archive_name, const QString output_path);
+private slots:
+    void doWork();
 
 private:
-    QLibrary m_7zLib;
+    QThread m_Thread;
+
+    QString m_archiveName;
+    QString m_outputPath;
+
 };
 
 #endif // EXTRACTOR_H

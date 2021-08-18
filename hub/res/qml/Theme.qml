@@ -5,7 +5,7 @@ Item {
     property string textColor: "#ffffff"
 
     property string panel: "#60000000"
-    property string hoverPanel: "#40000000"
+    property string hoverPanel: "#30000000"
 
     property string grey: "#606060"
     property string greyLight: "#8d8d8d"

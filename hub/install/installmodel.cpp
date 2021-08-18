@@ -15,10 +15,12 @@
 
 #include "downloader.h"
 
-const QString gInstalls("launcher.installs");
-const QString gTarget("launcher.target");
+namespace {
+    const QString gInstalls("launcher.installs");
+    const QString gTarget("launcher.target");
 
-const QString gEditor("WorldEditor.exe");
+    const QString gEditor("WorldEditor.exe");
+}
 
 InstallModel::InstallModel() :
         QAbstractListModel() {
@@ -32,41 +34,28 @@ InstallModel::InstallModel() :
 
     QVariant value = settings.value(gInstalls);
     if(value.isValid()) {
-        m_List = value.toStringList();
-        for(auto it : m_List) {
+        for(auto it : value.toStringList()) {
             QStringList pair = it.split(';');
-            if(!QFileInfo(pair.front()).exists()) {
-                m_List.removeAll(it);
+            Sdk sdk;
+            sdk.path = pair.front();
+            sdk.version = pair.back();
+            sdk.progress = -1;
+            if(QFileInfo(sdk.path).exists()) {
+                m_List.push_back(sdk);
             }
-        }
-    }
-
-    QFile file(":/versions.json");
-    if(file.open(QIODevice::ReadOnly)) {
-        QJsonDocument document = QJsonDocument::fromJson(file.readAll());
-        file.close();
-        QJsonObject root = document.object();
-        for(auto it : root.value("SDK").toArray()) {
-            QJsonObject sdk = it.toObject();
-            m_Versions << sdk.value("Version").toString();
         }
     }
 }
 
 InstallModel::~InstallModel() {
-    QSettings settings(COMPANY_NAME, EDITOR_NAME);
-    settings.setValue(gInstalls, m_List);
+    commitInstallRecord();
 }
 
 QString InstallModel::defaultSdk() const {
     if(!m_List.isEmpty()) {
-        return m_List.back();
+        return m_List.back().path;
     }
     return QString();
-}
-
-QStringList InstallModel::sdkVersions() {
-    return m_Versions;
 }
 
 int InstallModel::rowCount(const QModelIndex &parent) const {
@@ -80,12 +69,13 @@ QVariant InstallModel::data(const QModelIndex &index, int role) const {
     if(!index.isValid()) {
         return QVariant();
     }
-    QStringList pair = m_List.at(index.row()).split(';');
-    QFileInfo info(pair.front());
+    Sdk sdk = m_List.at(index.row());
+    QFileInfo info(sdk.path);
     switch(role) {
-        case VersionRole: { return pair.last(); }
-        case PathRole: { return info.absoluteFilePath(); }
-        case ProgressRole: { return 0; }
+        case VersionRole:  { return sdk.version; }
+        case PathRole:     { return info.absoluteFilePath(); }
+        case ProgressRole: { return sdk.progress; }
+        case StatusRole:   { return sdk.status; }
         default: break;
     }
     return QVariant();
@@ -96,6 +86,7 @@ QHash<int, QByteArray> InstallModel::roleNames() const {
     roles[VersionRole]  = "version";
     roles[PathRole]     = "path";
     roles[ProgressRole] = "progress";
+    roles[StatusRole]   = "status";
 
     return roles;
 }
@@ -115,7 +106,11 @@ void InstallModel::locateSdk() {
         if(probe.waitForStarted() && probe.waitForFinished()) {
             QString version = probe.readAllStandardOutput().constData();
             version = version.split(' ').last().trimmed();
-            m_List.push_front(QDir::fromNativeSeparators(path) + ";" + version);
+            Sdk sdk;
+            sdk.path = QDir::fromNativeSeparators(path);
+            sdk.version = version;
+            sdk.progress = -1;
+            m_List.push_front(sdk);
             commitInstallRecord();
         } else {
             qDebug() << "Can't find a valid SDK installation";
@@ -123,25 +118,42 @@ void InstallModel::locateSdk() {
     }
 }
 
-void InstallModel::installSdk(const QString &version) {
+void InstallModel::installSdk(const QString &version, const QStringList &components) {
     Q_UNUSED(version)
 
-    if(!m_List.contains(version)) {
-        Downloader *job = new Downloader(this);
-
-        QString url = QString("https://github.com/thunder-engine/thunder/releases/download/%1/ThunderEngine-windows-x64.7z").arg(version);
-
-        job->get(m_TargetDir, QUrl(url));
-        connect(job, &Downloader::finished, this, &InstallModel::onDownloadFinished);
-        connect(job, &Downloader::updateDownloadProgress, this, &InstallModel::onDownloadUpdated);
-
-        m_Jobs.append(job);
+    for(auto &it : m_List) {
+        if(it.version == version) {
+            return;
+        }
     }
+
+    Downloader *job = new Downloader(this);
+
+    QStringList urls;
+    for(auto &it : components) {
+        urls << m_Modules.value(version).value(it);
+    }
+
+    job->get(m_TargetDir, version, urls);
+    connect(job, &Downloader::updateDownloadProgress, this, &InstallModel::onDownloadUpdated);
+    connect(job, &Downloader::updateExtractProgress, this, &InstallModel::onExtractingUpdated);
+    connect(job, &Downloader::jobFinished, this, &InstallModel::onJobFinished);
+
+    m_Jobs.append(job);
+
+    Sdk sdk;
+    sdk.path = m_TargetDir;
+    sdk.version = version;
+    sdk.progress = 0;
+    m_List.push_front(sdk);
+
+    emit layoutAboutToBeChanged();
+    emit layoutChanged();
 }
 
 void InstallModel::uninstallSdk(const QString &path) {
     for(auto it : m_List) {
-        if(it.contains(path)) {
+        if(it.path == path) {
             m_List.removeAll(it);
             commitInstallRecord();
             return;
@@ -150,21 +162,75 @@ void InstallModel::uninstallSdk(const QString &path) {
 }
 
 void InstallModel::commitInstallRecord() {
-    m_List.removeDuplicates();
     QSettings settings(COMPANY_NAME, EDITOR_NAME);
-    settings.setValue(gInstalls, m_List);
+
+    QStringList values;
+    for(auto it : m_List) {
+        values << it.path + ";" + it.version;
+    }
+    values.removeDuplicates();
+    settings.setValue(gInstalls, values);
 
     emit layoutAboutToBeChanged();
     emit layoutChanged();
 }
 
-void InstallModel::onDownloadFinished() {
+void InstallModel::onJobFinished() {
     Downloader *job = dynamic_cast<Downloader *>(sender());
-    m_Jobs.removeOne(job);
-    job->deleteLater();
-    qDebug() << "onDownloadFinished";
+    if(job) {
+        for(auto &it : m_List) {
+            if(it.version == job->version()) {
+                it.progress = -1;
+                it.status.clear();
+
+                emit layoutAboutToBeChanged();
+                emit layoutChanged();
+
+                break;
+            }
+        }
+
+        m_Jobs.removeOne(job);
+        job->deleteLater();
+    }
 }
 
-void InstallModel::onDownloadUpdated(int64_t bytesReceived, int64_t bytesTotal) {
-    qDebug() << "onDownloadUpdated" << bytesReceived << bytesTotal;
+void InstallModel::onDownloadUpdated(float value) {
+    Downloader *job = dynamic_cast<Downloader *>(sender());
+    if(job) {
+        for(auto &it : m_List) {
+            if(it.version == job->version()) {
+                int progress = value * 50;
+                if(progress != it.progress) {
+                    it.progress = progress;
+                    it.status = tr("Downloading...");
+
+                    emit layoutAboutToBeChanged();
+                    emit layoutChanged();
+
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void InstallModel::onExtractingUpdated(float value) {
+    Downloader *job = dynamic_cast<Downloader *>(sender());
+    if(job) {
+        for(auto &it : m_List) {
+            if(it.version == job->version()) {
+                int progress = 50 + value * 50;
+                if(progress != it.progress) {
+                    it.progress = progress;
+                    it.status = tr("Extracting...");
+
+                    emit layoutAboutToBeChanged();
+                    emit layoutChanged();
+
+                    return;
+                }
+            }
+        }
+    }
 }

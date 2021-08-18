@@ -63,15 +63,19 @@ Item {
 
     GridView {
         id: projectsView
+
         anchors.margins: 20
-        cellHeight: 180
-        cellWidth: 200
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: pannel.bottom
         anchors.bottom: parent.bottom
+
+        cellHeight: 180
+        cellWidth: 200
+
         model: projectsModel
         clip: true
+
         delegate: Rectangle {
             x: 5
             width: 190

@@ -13,17 +13,16 @@ Project {
     ]
 
     property stringList incPaths: [
-        "../thirdparty/7zip/src/7zip"
+        "../thirdparty/7zip/src"
     ]
 
     QtGuiApplication {
         name: ThunderHub.PRODUCT_NAME
-        files: [
-            "res/versions.json",
-        ].concat(ThunderHub.srcFiles)
+        files: ThunderHub.srcFiles
 
         Depends { name: "cpp" }
         Depends { name: "bundle" }
+        Depends { name: "7zip" }
         Depends { name: "Qt"; submodules: ["core", "gui", "widgets", "multimedia", "quickwidgets"]; }
         property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
         bundle.infoPlist: ({
@@ -34,7 +33,7 @@ Project {
         consoleApplication: false
 
         cpp.defines: {
-            var result  = ThunderHub.defines
+            var result = ThunderHub.defines
             result.push("NEXT_SHARED")
             return result
         }
