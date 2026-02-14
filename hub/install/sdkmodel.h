@@ -3,30 +3,19 @@
 
 #include <QAbstractListModel>
 
-struct Module {
-    bool operator== (Module right) {
-        return (url == right.url);
-    }
-
-    QString name;
-    QString url;
-    QString size;
-    bool optional;
-};
-
 class SdkModel : public QAbstractListModel {
     Q_OBJECT
-public:
-    SdkModel();
 
     enum Roles {
         NameRole = Qt::UserRole + 1,
-        UrlRole,
         OptionalityRole,
-        SizeRole
+        InstalledRole,
+        SizeRole,
+        PlatformRole
     };
+public:
+    static SdkModel *instance();
 
-    Q_INVOKABLE QStringList sdkVersions();
     Q_INVOKABLE void setVersion(const QString &version);
 
 private:
@@ -37,9 +26,8 @@ private:
     QHash<int, QByteArray> roleNames() const override;
 
 protected:
-    QMap<QString, QList<Module>> m_Modules;
+    QString m_version;
 
-    QString m_Version;
 };
 
 #endif // SDKMODEL_H

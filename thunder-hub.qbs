@@ -6,9 +6,8 @@ Project {
     id: thunder
 
     property string COMPANY_NAME: "FrostSpear"
-    property string PRODUCT_NAME: "Thunder Hub"
+    property string PRODUCT_NAME: "Hub"
     property string EDITOR_NAME: "WorldEditor"
-    property string COPYRIGHT_AUTHOR: "Evgeniy Prikazchikov"
 
     property string PLATFORM: {
         var arch = qbs.architecture;
@@ -61,7 +60,6 @@ Project {
             "EDITOR_NAME=\"" + EDITOR_NAME + "\"",
             "SDK_VERSION=\"" + probe.SDK_VERSION + "\"",
             "COPYRIGHT_YEAR=" + COPYRIGHT_YEAR,
-            "COPYRIGHT_AUTHOR=\"" + COPYRIGHT_AUTHOR + "\"",
             "REVISION=\"" + probe.REVISION + "\"",
             "LEGAL=\"" + probe.LEGAL + "\""
 

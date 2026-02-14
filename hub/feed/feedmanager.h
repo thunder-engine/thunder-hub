@@ -5,7 +5,6 @@
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QThread;
 
 class FeedManager : public QObject {
     Q_OBJECT
@@ -16,20 +15,19 @@ public:
     explicit FeedManager(QObject *parent = nullptr);
     ~FeedManager();
 
-    QString blogFeed () const;
+    QString blogFeed() const;
 
 signals:
     void blogFeedChanged();
 
 private slots:
-    void replyFinished(QNetworkReply *reply);
+    void onUpdateCheckFinished();
 
 private:
-    QNetworkAccessManager *m_pManager;
-    QNetworkReply *m_pReply;
-    QThread *m_pThread;
+    QNetworkAccessManager *m_manager;
 
-    QString m_BlogData;
+    QString m_blogData;
+
 };
 
 #endif // FEEDMANAGER_H

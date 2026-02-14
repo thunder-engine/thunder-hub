@@ -1,6 +1,6 @@
-import QtQuick 2.10
-import QtQuick.Controls 2.3
-import QtQuick.Window 2.3
+import QtQuick
+import QtQuick.Controls.Basic
+import QtQuick.Window
 
 import "qrc:/qml/."
 
@@ -42,17 +42,6 @@ Window {
                 source: "qrc:/icons/thunderlight.svg"
             }
 
-            Text {
-                anchors.fill: parent
-                anchors.leftMargin: 50
-                horizontalAlignment: Text.AlignLeft
-                verticalAlignment: Text.AlignBottom
-                text: qsTr("Thunder Engine")
-                font.bold: false
-                font.pixelSize: theme.h2
-                color: theme.textColor
-            }
-
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
@@ -75,7 +64,7 @@ Window {
 
             RadioButton {
                 checked: true
-                text: qsTr("Library")
+                text: qsTr("Projects")
                 indicator: Rectangle {
                     width: 4
                     height: parent.height
@@ -84,12 +73,30 @@ Window {
                 }
                 contentItem: Text {
                     text: parent.text
-                    font.pixelSize: theme.h1
+                    font.pixelSize: theme.h2
                     color: parent.checked ? theme.textColor : theme.greyLight
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
                 }
-                onClicked: pageLoader.source = "Library.qml"
+                onClicked: pageLoader.source = "Projects.qml"
+            }
+
+            RadioButton {
+                text: qsTr("Installs")
+                indicator: Rectangle {
+                    width: 4
+                    height: parent.height
+                    visible: parent.checked
+                    color: theme.blue
+                }
+                contentItem: Text {
+                    text: parent.text
+                    font.pixelSize: theme.h2
+                    color: parent.checked ? theme.textColor : theme.greyLight
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 10
+                }
+                onClicked: pageLoader.source = "Installs.qml"
             }
 
             RadioButton {
@@ -102,7 +109,7 @@ Window {
                 }
                 contentItem: Text {
                     text: parent.text
-                    font.pixelSize: theme.h1
+                    font.pixelSize: theme.h2
                     color: parent.checked ? theme.textColor : theme.greyLight
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
@@ -120,12 +127,30 @@ Window {
                 }
                 contentItem: Text {
                     text: parent.text
-                    font.pixelSize: theme.h1
+                    font.pixelSize: theme.h2
                     color: parent.checked ? theme.textColor : theme.greyLight
                     verticalAlignment: Text.AlignVCenter
                     leftPadding: 10
                 }
                 onClicked: pageLoader.source = "Blog.qml"
+            }
+
+            RadioButton {
+                text: qsTr("Settings")
+                indicator: Rectangle {
+                    width: 4
+                    height: parent.height
+                    visible: parent.checked
+                    color: theme.blue
+                }
+                contentItem: Text {
+                    text: parent.text
+                    font.pixelSize: theme.h2
+                    color: parent.checked ? theme.textColor : theme.greyLight
+                    verticalAlignment: Text.AlignVCenter
+                    leftPadding: 10
+                }
+                onClicked: pageLoader.source = "Settings.qml"
             }
         }
     }
@@ -139,7 +164,7 @@ Window {
         Loader {
             id: pageLoader
             anchors.fill: parent
-            source: "Library.qml"
+            source: "Projects.qml"
         }
     }
 }

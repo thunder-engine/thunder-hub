@@ -3,37 +3,30 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
-#include <QThread>
 
 FeedManager::FeedManager(QObject *parent) :
-        QObject(parent) {
+        QObject(parent),
+        m_manager(new QNetworkAccessManager()) {
 
     QNetworkRequest req(QUrl("http://thunderengine.org/feed.xml"));
     req.setRawHeader("Accept", "application/xml,*/*");
 
-    m_pManager = new QNetworkAccessManager();
-    connect(m_pManager, &QNetworkAccessManager::finished,
-            this, &FeedManager::replyFinished, Qt::QueuedConnection);
-
-    m_pThread = new QThread();
-
-    m_pReply = m_pManager->get(req);
-    m_pManager->moveToThread(m_pThread);
-    m_pThread->start();
+    QNetworkReply *reply = m_manager->get(req);
+    connect(reply, &QNetworkReply::finished, this, &FeedManager::onUpdateCheckFinished);
 }
 
 FeedManager::~FeedManager() {
-    m_pReply->abort();
-    m_pThread->terminate();
-    delete m_pThread;
-    delete m_pManager;
+    delete m_manager;
 }
 
 QString FeedManager::blogFeed() const {
-    return m_BlogData;
+    return m_blogData;
 }
 
-void FeedManager::replyFinished(QNetworkReply *reply) {
-    m_BlogData = reply->readAll();
-    emit blogFeedChanged();
+void FeedManager::onUpdateCheckFinished() {
+    QNetworkReply *reply = dynamic_cast<QNetworkReply *>(sender());
+    if(reply) {
+        m_blogData = reply->readAll();
+        emit blogFeedChanged();
+    }
 }

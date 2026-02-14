@@ -2,13 +2,18 @@ import qbs
 
 Project {
     id: archive
-    property stringList srcFiles: [
-        "src/**/*.c",
-        "src/**/*.h",
-    ]
+
+    property stringList srcFiles: {
+        var sources = [
+            "src/*.c",
+            "src/*.h"
+        ];
+
+        return sources;
+    }
 
     property stringList incPaths: [
-        "./src"
+        "src"
     ]
 
     StaticLibrary {
