@@ -7,23 +7,27 @@
 
 #include <QDebug>
 
-Downloader::Downloader(QObject *parent) :
+#include "installmodel.h"
+#include "settings.h"
+
+Downloader::Downloader(QNetworkAccessManager *manager, QObject *parent) :
         QObject(parent),
-        m_currentReply(nullptr) {
-    connect(&m_manager, &QNetworkAccessManager::finished, this, &Downloader::onReply);
+        m_manager(manager),
+        m_sdk(nullptr),
+        m_file(nullptr),
+        m_componentCount(0) {
 
     connect(&m_extractor, &Extractor::extractProgress, this, &Downloader::onUpdateExtractProgress);
     connect(&m_extractor, &Extractor::extractFinished, this, &Downloader::onExtractFinished);
 }
 
-bool Downloader::get(const QString &targetFolder, const QString &version, const QStringList &components) {
-    if(targetFolder.isEmpty() || version.isEmpty() || components.isEmpty()) {
+bool Downloader::get(Sdk *sdk, const QStringList &components) {
+    if(sdk == nullptr || components.isEmpty()) {
         return false;
     }
 
-    m_version = version;
+    m_sdk = sdk;
     m_downloadComponents = components;
-    m_targetFolder = targetFolder;
 
     m_componentCount = m_downloadComponents.count();
 
@@ -32,37 +36,11 @@ bool Downloader::get(const QString &targetFolder, const QString &version, const 
     return true;
 }
 
-QString Downloader::path() const {
-    return m_path;
-}
-
-QString Downloader::version() const {
-    return m_version;
-}
-
 void Downloader::onReadyRead() {
-    if(m_file) {
-        m_file->write(m_currentReply->readAll());
+    QNetworkReply *reply = dynamic_cast<QNetworkReply *>(sender());
+    if(m_file && reply) {
+        m_file->write(reply->readAll());
     }
-}
-
-void Downloader::cancelDownload() {
-    if(m_currentReply) {
-        m_currentReply->abort();
-    }
-}
-
-void Downloader::onReply(QNetworkReply *reply) {
-    if(reply->error() == QNetworkReply::NoError) {
-        m_file->flush();
-        m_file->close();
-    } else {
-        m_file->remove();
-    }
-
-    delete m_file;
-    m_file = nullptr;
-    reply->deleteLater();
 }
 
 void Downloader::onUpdateDownloadProgress(int64_t bytesReceived, int64_t bytesTotal) {
@@ -70,7 +48,13 @@ void Downloader::onUpdateDownloadProgress(int64_t bytesReceived, int64_t bytesTo
     value += m_componentCount - (m_downloadComponents.count() + 1);
     value /= (double)m_componentCount;
 
-    emit updateDownloadProgress(value);
+    int progress = value * 50;
+    if(progress != m_sdk->progress) {
+        m_sdk->progress = progress;
+        m_sdk->status = tr("Downloading...");
+    }
+
+    emit jobUpdated();
 }
 
 void Downloader::onUpdateExtractProgress(int64_t filesExtracted, int64_t filesTotal) {
@@ -78,37 +62,51 @@ void Downloader::onUpdateExtractProgress(int64_t filesExtracted, int64_t filesTo
     value += m_componentCount - (m_extractComponents.count() + 1);
     value /= (double)m_componentCount;
 
-    emit updateExtractProgress(value);
+    int progress = 50 + value * 50;
+    if(progress != m_sdk->progress) {
+        m_sdk->progress = progress;
+        m_sdk->status = tr("Extracting...");
+    }
+
+    emit jobUpdated();
 }
 
 void Downloader::onDownloadFinished() {
-    if(m_currentReply) {
-        if(m_currentReply->error() != QNetworkReply::NoError) {
-            qDebug() << m_currentReply->errorString();
-            return;
+    QNetworkReply *reply = dynamic_cast<QNetworkReply *>(sender());
+    if(reply) {
+        if(reply->error() == QNetworkReply::NoError) {
+            m_file->flush();
+            m_file->close();
+        } else {
+            qDebug() << reply->errorString();
+            m_file->remove();
         }
+
+        delete m_file;
+        m_file = nullptr;
+        reply->deleteLater();
     }
 
     if(!m_downloadComponents.isEmpty()) {
         QUrl url(m_downloadComponents.takeFirst());
 
-        m_path = m_targetFolder + QDir::separator() + url.fileName();
-        m_extractComponents << m_path;
+        QDir dir;
+        dir.mkpath(Settings::instance()->tempDir());
+        QString path(Settings::instance()->tempDir() + QDir::separator() + url.fileName());
+        m_extractComponents << path;
 
-        m_file = new QFile(m_path);
+        m_file = new QFile(path);
         if(!m_file->open(QIODevice::WriteOnly)) {
             delete m_file;
             m_file = nullptr;
             return;
         }
 
-        QNetworkRequest request(url);
-        request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
-        m_currentReply = m_manager.get(request);
+        reply = m_manager->get(QNetworkRequest(url));
 
-        connect(m_currentReply, &QNetworkReply::readyRead, this, &Downloader::onReadyRead);
-        connect(m_currentReply, &QNetworkReply::downloadProgress, this, &Downloader::onUpdateDownloadProgress);
-        connect(m_currentReply, &QNetworkReply::finished, this, &Downloader::onDownloadFinished);
+        connect(reply, &QNetworkReply::readyRead, this, &Downloader::onReadyRead);
+        connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::onUpdateDownloadProgress);
+        connect(reply, &QNetworkReply::finished, this, &Downloader::onDownloadFinished);
     } else { // Start extraction procedure
         onExtractFinished();
     }
@@ -116,8 +114,12 @@ void Downloader::onDownloadFinished() {
 
 void Downloader::onExtractFinished() {
     if(!m_extractComponents.isEmpty()) {
-        m_extractor.extract(m_extractComponents.takeFirst(), "C:/Projects/");
+        m_extractor.extract(m_extractComponents.takeFirst(), Settings::instance()->sdkDir());
     } else {
+        m_sdk->progress = -1;
+        m_sdk->status.clear();
+        m_sdk->checkInstalled();
+
         emit jobFinished();
     }
 }

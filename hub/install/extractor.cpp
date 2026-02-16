@@ -16,20 +16,20 @@ static const ISzAlloc g_Alloc = { SzAlloc, SzFree };
 Extractor::Extractor(QObject *parent) :
     QObject(parent) {
 
-    moveToThread(&m_Thread);
-    connect(&m_Thread, &QThread::started, this, &Extractor::doWork);
+    moveToThread(&m_thread);
+    connect(&m_thread, &QThread::started, this, &Extractor::doWork);
 }
 
 Extractor::~Extractor() {
-    m_Thread.quit();
-    m_Thread.wait();
+    m_thread.quit();
+    m_thread.wait();
 }
 
 void Extractor::extract(const QString archiveName, const QString outputPath) {
     m_archiveName = archiveName;
     m_outputPath = outputPath;
 
-    m_Thread.start();
+    m_thread.start();
 }
 
 void Extractor::doWork() {
@@ -56,7 +56,6 @@ void Extractor::doWork() {
     } else {
         lookStream.bufSize = kInputBufSize;
         lookStream.realStream = &archiveStream.vt;
-        LookToRead2_Init(&lookStream);
     }
 
     CrcGenerateTable();
@@ -89,7 +88,11 @@ void Extractor::doWork() {
         }
         SzArEx_GetFileNameUtf16(&db, i, temp);
 
-        QString path = m_outputPath + QString::fromUtf16(temp).replace("release/install-root/", "");
+        QString sub(QString::fromUtf16(temp));
+        sub.remove("sdk/");
+        sub.remove("install-root/");
+        sub.remove("release/");
+        QString path(m_outputPath + "/" + sub);
 
         if(isDir) {
             QDir dir;
@@ -122,7 +125,7 @@ void Extractor::doWork() {
 
     File_Close(&archiveStream.file);
 
-    m_Thread.exit();
+    m_thread.exit();
 
-    emit extractFinished();
+    emit extractFinished(res);
 }

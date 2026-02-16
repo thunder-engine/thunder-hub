@@ -4,20 +4,53 @@
 #include <QAbstractListModel>
 
 class Downloader;
+class QNetworkAccessManager;
+
+struct Module {
+    bool operator== (Module right) {
+        return (url == right.url);
+    }
+
+    QString platform;
+
+    QString name;
+
+    QString url;
+
+    QString size;
+
+    bool optional = true;
+
+    bool installed = false;
+
+};
 
 struct Sdk {
-    bool operator== (Sdk right) {
+    bool operator== (const Sdk &right) const {
         return (path == right.path) && (version == right.version);
     }
 
+    void checkInstalled();
+
     QString path;
+
+    QString root;
+
     QString version;
+
     QString status;
-    int progress;
+
+    QList<Module> modules;
+
+    int progress = -1;
+
+    bool installed = false;
+
 };
 
 class InstallModel : public QAbstractListModel {
     Q_OBJECT
+
 public:
     enum Roles {
         VersionRole = Qt::UserRole + 1,
@@ -27,18 +60,29 @@ public:
     };
 
     InstallModel();
-    ~InstallModel() override;
+
+    static InstallModel *instance();
 
     QString defaultSdk() const;
+    void commitInstallRecord();
 
+    Sdk *getSdk(const QString &version);
+    const QList<Module> getModules(const QString &version);
+
+    Q_INVOKABLE QStringList sdkVersions();
+    Q_INVOKABLE QStringList installedModules(const QString &version);
     Q_INVOKABLE void locateSdk();
-    Q_INVOKABLE void installSdk(const QString &version, const QStringList &components);
-    Q_INVOKABLE void uninstallSdk(const QString &path);
+    Q_INVOKABLE void updateSdk(const QString &version, const QStringList &modules);
+    Q_INVOKABLE void uninstallSdk(const QString &version);
+    Q_INVOKABLE void explorer(const QString &version);
+
+signals:
+    void sdkListChanged();
 
 private slots:
+    void onUpdateCheckFinished();
     void onJobFinished();
-    void onDownloadUpdated(float value);
-    void onExtractingUpdated(float value);
+    void onJobUpdated();
 
 private:
     int rowCount(const QModelIndex &parent) const override;
@@ -47,18 +91,13 @@ private:
 
     QHash<int, QByteArray> roleNames() const override;
 
-    void commitInstallRecord();
-
 protected:
-    QList<Sdk> m_List;
+    QList<Sdk> m_sdk;
 
-    QList<Downloader *> m_Jobs;
+    QList<Downloader *> m_jobs;
 
-    QString m_TargetDir;
+    QNetworkAccessManager *m_manager;
 
-    QStringList m_Versions;
-
-    QMap<QString, QMap<QString, QString>> m_Modules;
 };
 
 #endif // INSTALLMODEL_H

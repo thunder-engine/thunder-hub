@@ -3,10 +3,11 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "project/projectmodel.h"
+#include "project/projectmanager.h"
 #include "feed/feedmanager.h"
 #include "install/installmodel.h"
 #include "install/sdkmodel.h"
+#include "settings/settings.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -15,19 +16,30 @@ int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationName(PRODUCT_NAME);
     QCoreApplication::setApplicationVersion(SDK_VERSION);
 
-    InstallModel installModel;
-    SdkModel sdkModel;
-    ProjectModel projectModel(installModel);
     FeedManager feedManager;
 
     QQmlApplicationEngine engine;
 
-    engine.rootContext()->setContextProperty("installModel", &installModel);
-    engine.rootContext()->setContextProperty("sdkModel", &sdkModel);
-    engine.rootContext()->setContextProperty("projectsModel", &projectModel);
-    engine.rootContext()->setContextProperty("feedManager", &feedManager);
+    engine.addImportPath(":/qml");
+    engine.addImportPath(":/qml/components");
+
+    QQmlContext *context = engine.rootContext();
+    context->setContextProperty("installModel", InstallModel::instance());
+    context->setContextProperty("sdkModel", SdkModel::instance());
+    context->setContextProperty("projectsManager", ProjectManager::instance());
+    context->setContextProperty("feedManager", &feedManager);
+    context->setContextProperty("settingsManager", Settings::instance());
 
     engine.load(QUrl("qrc:/qml/Startup.qml"));
 
-    return a.exec();
+    if(engine.rootObjects().isEmpty()) {
+        return -1;
+    }
+
+    int result = a.exec();
+
+    InstallModel::instance()->commitInstallRecord();
+    ProjectManager::instance()->commitProjectRecord();
+
+    return result;
 }

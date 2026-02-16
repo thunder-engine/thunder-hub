@@ -14,13 +14,13 @@ public:
 
 signals:
     void extractProgress(qint64 filesExtracted, qint64 filesTotal);
-    void extractFinished();
+    void extractFinished(int code);
 
 private slots:
     void doWork();
 
 private:
-    QThread m_Thread;
+    QThread m_thread;
 
     QString m_archiveName;
     QString m_outputPath;

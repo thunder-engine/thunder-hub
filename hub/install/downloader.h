@@ -2,35 +2,30 @@
 #define DOWNLOADER_H
 
 #include <QObject>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 
 #include "extractor.h"
 
+class Sdk;
+
 class QFile;
+class QNetworkAccessManager;
 
 class Downloader : public QObject {
     Q_OBJECT
 
 public:
-    explicit Downloader(QObject *parent = nullptr);
-    bool get(const QString &targetFolder, const QString &version, const QStringList &components);
-
-    QString path() const;
-    QString version() const;
-
-public slots:
-    void cancelDownload();
+    explicit Downloader(QNetworkAccessManager *manager, QObject *parent = nullptr);
+    bool get(Sdk *sdk, const QStringList &components);
 
 signals:
     void updateDownloadProgress(float percent);
     void updateExtractProgress(float percent);
 
     void jobFinished();
+    void jobUpdated();
 
 private slots:
     void onReadyRead();
-    void onReply(QNetworkReply *reply);
     void onUpdateDownloadProgress(int64_t bytesReceived, int64_t bytesTotal);
     void onUpdateExtractProgress(int64_t filesExtracted, int64_t filesTotal);
 
@@ -38,16 +33,15 @@ private slots:
     void onExtractFinished();
 
 private:
-    QNetworkReply *m_currentReply;
-    QFile *m_file;
-    QNetworkAccessManager m_manager;
-    QString m_path;
-    QString m_version;
-    QString m_targetFolder;
     QStringList m_downloadComponents;
     QStringList m_extractComponents;
 
     Extractor m_extractor;
+
+    QNetworkAccessManager *m_manager;
+
+    Sdk *m_sdk;
+    QFile *m_file;
 
     int m_componentCount;
 };

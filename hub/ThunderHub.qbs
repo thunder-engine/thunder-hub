@@ -13,6 +13,7 @@ Project {
     ]
 
     property stringList incPaths: [
+        "settings",
         "../thirdparty/7zip/src"
     ]
 
@@ -23,7 +24,7 @@ Project {
         Depends { name: "cpp" }
         Depends { name: "bundle" }
         Depends { name: "7zip" }
-        Depends { name: "Qt"; submodules: ["core", "gui", "widgets", "multimedia", "quickwidgets"]; }
+        Depends { name: "Qt"; submodules: ["core", "quickwidgets", "network"]; }
         property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
         bundle.infoPlist: ({
             "NSHumanReadableCopyright": "(C) 2007-" + ThunderHub.COPYRIGHT_YEAR + " by " + ThunderHub.COPYRIGHT_AUTHOR
@@ -55,7 +56,6 @@ Project {
             condition: qbs.targetOS.contains("darwin")
             cpp.sonamePrefix: "@rpath"
             cpp.rpaths: "@executable_path/../Frameworks/"
-            cpp.weakFrameworks: ["OpenGL"]
         }
 
         Group {

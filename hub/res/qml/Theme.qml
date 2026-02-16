@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.3
+import QtQuick
+import QtQuick.Controls
 
 Item {
     property string textColor: "#ffffff"
@@ -29,10 +29,10 @@ Item {
 
     property int frameRadius: 4
 
-    property int textSize: 10
-    property int h1: 24
-    property int h2: 18
-    property int h3: 16
+    property int textSize: 14
+    property int h1: 28
+    property int h2: 22
+    property int h3: 18
 
     property var colors: [Qt.rgba(1,0,0), Qt.rgba(0,1,0), Qt.rgba(0,0,1), Qt.rgba(1,1,0), Qt.rgba(1,0,1), Qt.rgba(0,1,1)]
 }

@@ -1,68 +1,113 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import "components"
 
 Item {
     Item {
         id: pannel
-        height: 50
+        height: 90
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
 
         Text {
             id: label
+
             anchors.left: parent.left
             anchors.bottom: pannel.bottom
             anchors.leftMargin: 20
+
             text: qsTr("Projects")
-            font.bold: false
+
+            font.bold: true
             font.pixelSize: theme.h1
             color: theme.textColor
         }
 
-        Button {
+        ToolButton {
             id: newProject
-            height: 24
-            width: 24
-            anchors.left: label.right
+            height: 32
+            width: 120
+
+            anchors.right: parent.right
             anchors.bottom: pannel.bottom
-            anchors.leftMargin: 10
-            hoverEnabled: true
-            text: "+"
+            anchors.rightMargin: 20
+
+            text: qsTr("New project")
+
+            display: AbstractButton.TextBesideIcon
 
             background: Rectangle {
                 anchors.fill: parent
                 radius: theme.frameRadius
-                color: parent.hovered ? theme.blueHover : theme.blue
+                color: parent.hovered ? theme.blueLight : theme.blue
             }
+
+            contentItem: Row {
+                spacing: 6
+
+                Image {
+                    source: "qrc:/icons/plus.png"
+                    sourceSize: Qt.size(16, 16)
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: newProject.text
+                    color: theme.textColor
+                    font.pixelSize: theme.textSize
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+
+            onClicked: projectsManager.newProject()
+        }
+
+        ToolButton {
+            id: locateProject
+            height: 32
+            width: 120
+
+            anchors.right: newProject.left
+            anchors.bottom: pannel.bottom
+            anchors.rightMargin: 20
+
+            text: qsTr("Locate Existing")
+
+            background: Rectangle {
+                anchors.fill: parent
+                radius: theme.frameRadius
+                color: parent.hovered ? theme.hoverPanel : theme.panel
+            }
+
             contentItem: Text {
-                text: parent.text
-                font.bold: false
-                font.pixelSize: theme.h3
+                text: locateProject.text
                 color: theme.textColor
-                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: theme.textSize
                 verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
             }
-            onClicked: contextMenu.open()
-            Menu {
-                id: contextMenu
-                x: 0
-                y: 30
-                width: 150
-                MenuItem {
-                    text: qsTr("New Project")
-                    onTriggered: projectsModel.newProject()
-                }
-                MenuItem {
-                    text: qsTr("Locate Existing")
-                    onTriggered: projectsModel.importProject()
-                }
-            }
+
+            onClicked: projectsManager.importProject()
         }
     }
 
-    GridView {
+    Rectangle {
+        anchors.top: pannel.bottom
+        anchors.left: pannel.left
+        anchors.right: pannel.right
+        anchors.topMargin: 10
+
+        height: 1
+        color: theme.blue
+    }
+
+    ListView {
         id: projectsView
+
+        model: projectsManager
 
         anchors.margins: 20
         anchors.left: parent.left
@@ -70,79 +115,106 @@ Item {
         anchors.top: pannel.bottom
         anchors.bottom: parent.bottom
 
-        cellHeight: 180
-        cellWidth: 200
-
-        model: projectsModel
+        spacing: 2
         clip: true
 
-        delegate: Rectangle {
-            x: 5
-            width: 190
-            height: 170
-            color: theme.panel
-            radius: theme.frameRadius
+        delegate: Item {
+            width: ListView.view ? ListView.view.width : 0
+            height: 70
 
-            Column {
-                spacing: 5
+            RowLayout {
                 anchors.fill: parent
-                Image {
-                    width: 128
-                    height: 128
-                    source: icon
-                    anchors.horizontalCenter: parent.horizontalCenter
-                }
+
                 Rectangle {
-                    width: parent.width
-                    height: 1
-                    color: theme.blue
-                }
-                Text {
-                    text: name
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    verticalAlignment: Text.AlignBottom
-                    color: theme.textColor
-                    font.bold: false
-                    font.pixelSize: theme.h3
-                }
-            }
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
 
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onClicked: projectsModel.openProject(path)
-                onEntered: parent.color = theme.hoverPanel
-                onExited: parent.color = theme.panel
-            }
-
-            ToolButton {
-                id: toolButton
-                text: "⋮"
-                anchors.right: parent.right
-                anchors.top: parent.top
-                width: 30
-                height: 30
-                background: Rectangle {
+                    radius: theme.frameRadius
                     color: "transparent"
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.bold: true
-                    font.pixelSize: theme.h1
-                    color: theme.textColor
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                onClicked: itemContextMenu.open()
 
-                Menu {
-                    id: itemContextMenu
-                    x: -toolButton.x + 20
-                    y: 20
-                    width: 150
-                    MenuItem {
-                        text: qsTr("Remove from list")
-                        onTriggered: projectsModel.removeProject(path)
+                    Row {
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 5
+                        spacing: 20
+                        anchors.fill: parent
+
+                        Image {
+                            width: 60
+                            height: 60
+                            source: icon
+                        }
+
+                        Column {
+                            Text {
+                                text: name
+                                color: theme.textColor
+                                font.bold: true
+                                font.pixelSize: theme.h3
+                                verticalAlignment: Text.AlignVCenter
+                            }
+
+                            Text {
+                                text: path
+                                color: theme.textColor
+                                font.bold: false
+                                font.pixelSize: theme.textSize
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        onClicked: projectsManager.openProject(path)
+                        onEntered: parent.color = theme.hoverPanel
+                        onExited: parent.color = "transparent"
+                    }
+                }
+
+                ToolButton {
+                    id: toolButton
+
+                    icon.source: "qrc:/icons/handle.png"
+                    icon.color: theme.textColor
+
+                    Layout.fillHeight: true
+                    width: 20
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: theme.frameRadius
+                        color: parent.hovered ? theme.hoverPanel : "transparent"
+                    }
+
+                    onClicked: itemContextMenu.open()
+
+                    Menu {
+                        id: itemContextMenu
+
+                        x: 0
+                        y: 70
+                        width: 150
+
+                        background: Rectangle {
+                            color: theme.greyDark
+                            radius: theme.frameRadius
+                            border.color: theme.greyLight
+                        }
+
+                        MenuSeparator {
+                            height: theme.frameRadius
+                            visible: false
+                        }
+
+                        StyledItem {
+                            text: qsTr("Remove from list")
+                            onTriggered: projectsManager.removeProject(path)
+                        }
+
+                        MenuSeparator {
+                            height: theme.frameRadius
+                            visible: false
+                        }
                     }
                 }
             }
