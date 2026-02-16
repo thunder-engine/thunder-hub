@@ -62,8 +62,10 @@ Product {
             if (!Qt.core.frameworkBuild) {
                 var libPrefix = (qbs.targetOS.contains("linux") ? "lib" : "") + "Qt" + Qt.core.versionMajor
                 var libPostfix = ((qbs.targetOS.contains("windows") && qbs.debugInformation) ? "d": "") + cpp.dynamicLibrarySuffix
-                var libs = ["Core", "Gui", "Xml", "Network", "QuickWidgets", "Quick", "QuickTemplates2",
-                            "QuickShapes", "QuickControls2", "Qml", "Svg", "Widgets"]
+                var libs = ["Core", "Gui", "Network", "OpenGL", "QmlCore", "Qml", "QmlMeta", "QmlModels", "QmlNetwork", "QmlWorkerScript",
+                            "QmlXmlListModel", "QuickControls2Basic", "QuickControls2BasicStyleImpl", "QuickControls2", "QuickControls2Impl",
+                            "Quick", "QuickDialogs2", "QuickDialogs2QuickImpl", "QuickDialogs2Utils", "QuickLayouts", "QuickTemplates2",
+                            "QuickWidgets", "Svg", "Xml", "Widgets"]
                 if(qbs.targetOS.contains("linux")) {
                     for(var it in libs) {
                         list.push(libPrefix + libs[it] + libPostfix + "." + Qt.core.versionMajor + "." + Qt.core.versionMinor + "." + Qt.core.versionPatch)
@@ -91,8 +93,7 @@ Product {
                 list.push("**/QtQml.framework/**")
                 list.push("**/QtQuick.framework/**")
                 list.push("**/QtQuickWidgets.framework/**")
-                list.push("**/Qt5Svg.framework/**")
-                list.push("**/QtDBus.framework/**")
+                list.push("**/QtSvg.framework/**")
             }
             return list
         }
@@ -150,11 +151,28 @@ Product {
     Group {
         name: "QML Plugins"
         prefix: FileInfo.joinPaths(Qt.core.pluginPath, "/../qml/")
-        files: [
-            "QtGraphicalEffects/**",
-            "QtQuick/**",
-            "QtQml/XmlListModel/**"
-        ]
+
+        files: {
+            var files = ["QtQuick/**/*.qml", "QtQml/XmlListModel/**/*.qml",
+                         "QtQuick/**/plugins.qmltypes", "QtQml/XmlListModel/**/plugins.qmltypes",
+                         "QtQuick/**/qmldir", "QtQml/XmlListModel/**/qmldir"]
+            if(qbs.targetOS.contains("windows")) {
+                if(qbs.debugInformation) {
+                    files.push("QtQuick/**/*d.dll")
+                    files.push("QtQml/XmlListModel/**/*d.dll")
+                } else {
+                    files.push("QtQuick/**/*.dll")
+                    files.push("QtQml/XmlListModel/**/*.dll")
+                }
+            } else if(qbs.targetOS.contains("linux")) {
+                files.push("QtQuick/**/*.so")
+                files.push("QtQml/XmlListModel/**/*.so")
+            } else {
+                files.push("*")
+            }
+            return files
+        }
+
         excludeFiles: pluginExcludeFiles
         qbs.install: true
         qbs.installDir: install.QML_PATH

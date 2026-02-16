@@ -32,6 +32,10 @@ int main(int argc, char *argv[]) {
 
     engine.load(QUrl("qrc:/qml/Startup.qml"));
 
+    if(engine.rootObjects().isEmpty()) {
+        return -1;
+    }
+
     int result = a.exec();
 
     InstallModel::instance()->commitInstallRecord();
