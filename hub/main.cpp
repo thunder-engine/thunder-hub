@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
     QCoreApplication::setOrganizationName(COMPANY_NAME);
     QCoreApplication::setApplicationName(PRODUCT_NAME);
-    QCoreApplication::setApplicationVersion(SDK_VERSION);
+    QCoreApplication::setApplicationVersion(PRODUCT_VERSION);
 
     FeedManager feedManager;
 

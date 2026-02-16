@@ -33,8 +33,6 @@ namespace {
 
     const char *gName("name");
     const char *gSize("size");
-
-    const char *gEditor("WorldEditor.exe");
 }
 
 void Sdk::checkInstalled() {
@@ -295,7 +293,12 @@ QStringList InstallModel::installedModules(const QString &version) {
 }
 
 void InstallModel::locateSdk() {
-    QString path = QFileDialog::getOpenFileName(nullptr, tr("Locate the WorldEditor"), "/", gEditor);
+    QString name(EDITOR_NAME);
+#ifdef Q_OS_WIN
+    name += ".exe";
+#endif
+
+    QString path = QFileDialog::getOpenFileName(nullptr, tr("Locate the ") + EDITOR_NAME, "/", name);
     if(!path.isEmpty()) {
         QFileInfo info(path);
 

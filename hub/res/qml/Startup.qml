@@ -98,7 +98,7 @@ Window {
                 }
                 onClicked: pageLoader.source = "Installs.qml"
             }
-
+/*
             RadioButton {
                 text: qsTr("Learn")
                 indicator: Rectangle {
@@ -134,7 +134,7 @@ Window {
                 }
                 onClicked: pageLoader.source = "Blog.qml"
             }
-
+*/
             RadioButton {
                 text: qsTr("Settings")
                 indicator: Rectangle {
