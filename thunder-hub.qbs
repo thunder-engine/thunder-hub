@@ -7,17 +7,10 @@ Project {
 
     property string COMPANY_NAME: "FrostSpear"
     property string PRODUCT_NAME: "Hub"
+    property string PRODUCT_VERSION: "2026.1"
     property string EDITOR_NAME: "WorldEditor"
 
-    property string PLATFORM: {
-        var arch = qbs.architecture;
-        if(qbs.targetOS.contains("darwin") || qbs.targetOS[0] === "linux") {
-            arch = "x86_64"
-        }
-        return qbs.targetOS[0] + "/" + arch;
-    }
-
-     property string bundle: {
+    property string bundle: {
         if(qbs.targetOS.contains("darwin")) {
             return PRODUCT_NAME + ".app/Contents/MacOS/"
         }
@@ -46,23 +39,20 @@ Project {
     property string RESOURCE_ROOT: "res"
 
     property string PREFIX: ""
-    property string LAUNCHER_PATH: "launcher"
-    property string PLATFORM_PATH: PLATFORM
-    property string BIN_PATH: PLATFORM_PATH + "/bin"
-    property string LIB_PATH: (qbs.targetOS[0] === "linux") ? PLATFORM_PATH + "/lib" : BIN_PATH
-    property string STATIC_PATH: PLATFORM_PATH + "/static"
-    property string PLUGINS_PATH: BIN_PATH + "/plugins"
+    property string PLATFORM_PATH: bundle + "hub"
+    property string BIN_PATH: PLATFORM_PATH
+    property string QTPLUGINS_PATH: BIN_PATH + "/plugins"
+    property string QML_PATH: BIN_PATH + "/qml"
 
     property stringList defines: {
         var result  = [
             "COMPANY_NAME=\"" + COMPANY_NAME + "\"",
             "PRODUCT_NAME=\"" + PRODUCT_NAME + "\"",
+            "PRODUCT_VERSION=\"" + PRODUCT_VERSION + "\"",
             "EDITOR_NAME=\"" + EDITOR_NAME + "\"",
-            "SDK_VERSION=\"" + probe.SDK_VERSION + "\"",
             "COPYRIGHT_YEAR=" + COPYRIGHT_YEAR,
             "REVISION=\"" + probe.REVISION + "\"",
             "LEGAL=\"" + probe.LEGAL + "\""
-
         ];
         return result;
     }

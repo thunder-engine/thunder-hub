@@ -20,9 +20,6 @@ Product {
         return ".so"
     }
 
-    property string QTPLUGINS_PATH: install.PLATFORM_PATH + "/" + install.bundle + "/plugins"
-    property string QML_PATH: install.PLATFORM_PATH + "/" + install.bundle + "/qml"
-
     property var pluginFiles: {
         var files = []
         if(qbs.targetOS.contains("windows")) {
@@ -178,25 +175,5 @@ Product {
         qbs.installDir: install.QML_PATH
         qbs.installPrefix: install.PREFIX
         qbs.installSourceBase: prefix
-    }
-
-    Group {
-        name: "Qt Config"
-        files: {
-            if(qbs.targetOS.contains("darwin")) {
-                return "darwin/qt.conf"
-            }
-
-            return "windows/qt.conf"
-        }
-        qbs.install: true
-        qbs.installDir: {
-            if(qbs.targetOS.contains("darwin")) {
-                return install.BIN_PATH + install.bundle + "/../Resources"
-            }
-
-            return install.BIN_PATH + "/" + install.bundle
-        }
-        qbs.installPrefix: install.PREFIX
     }
 }
