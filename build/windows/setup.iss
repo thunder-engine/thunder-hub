@@ -31,9 +31,9 @@ DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=build\release
+OutputDir=..\release
 OutputBaseFilename=ThunderHub
-SetupIconFile=hub\res\Thunder.ico
+SetupIconFile=..\..\hub\res\Thunder.ico
 SolidCompression=yes
 WizardStyle=modern dynamic
 
@@ -44,8 +44,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "build\release\install-root\hub\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "build\release\install-root\hub\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\release\install-root\hub\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\release\install-root\hub\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
