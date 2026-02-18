@@ -32,9 +32,9 @@ jobs:
     - name: Get version
       id: get-version
       run: |
-        if [[ "$THUNDER_RELEASE" == 'true' ]]; then echo "::set-output name=version::${VERSION}" ; fi
-        if [[ "$THUNDER_RELEASE" != 'true' ]]; then echo "::set-output name=version::${VERSION}-SNAPSHOT" ; fi
-        echo "::set-output name=release::${THUNDER_RELEASE}"
+        if [[ "$THUNDER_RELEASE" == 'true' ]]; then echo "version=${VERSION}" >> $GITHUB_OUTPUT ; fi
+        if [[ "$THUNDER_RELEASE" != 'true' ]]; then echo "version=${VERSION}-SNAPSHOT" >> $GITHUB_OUTPUT ; fi
+        echo "release=${THUNDER_RELEASE}" >> $GITHUB_OUTPUT
         
   linux:
     name: Linux
