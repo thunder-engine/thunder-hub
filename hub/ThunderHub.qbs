@@ -29,7 +29,7 @@ Project {
         bundle.infoPlist: ({
             "NSHumanReadableCopyright": "(C) 2007-" + ThunderHub.COPYRIGHT_YEAR + " by " + ThunderHub.COPYRIGHT_AUTHOR
         })
-        bundle.identifierPrefix: "com.thunderengine.hub"
+        bundle.identifierPrefix: "com.thunderengine"
 
         consoleApplication: false
 
@@ -74,7 +74,7 @@ Project {
             files: [
                 "res/icons/thunder.icns"
             ]
-            qbs.installDir: ThunderHub.BIN_PATH + "/" + ThunderHub.bundle + "../Resources"
+            qbs.installDir: ThunderHub.QML_PATH + "/../Resources"
             qbs.installPrefix: ThunderHub.PREFIX
         }
     }
