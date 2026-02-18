@@ -31,7 +31,7 @@ DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=..\release
+OutputDir=..\..\release
 OutputBaseFilename=ThunderHub
 SetupIconFile=..\..\hub\res\Thunder.ico
 SolidCompression=yes

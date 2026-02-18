@@ -124,7 +124,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ThundeHub.exe
-        path: build/release/ThundeHub.exe
+        path: release/ThunderHub.exe
     
   github:
     name: Upload to GitHub releases
