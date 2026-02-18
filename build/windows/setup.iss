@@ -44,8 +44,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\release\install-root\hub\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\release\install-root\hub\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\release\install-root\hub\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\release\install-root\hub\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

@@ -113,7 +113,6 @@ jobs:
     - name: Build Thunder Hub
       run: |
         qbs install --all-products config:release profile:qt
-        dir build\\windows
     
     - name: Compile Inno Setup script
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.7
