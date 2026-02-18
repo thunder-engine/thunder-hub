@@ -5,14 +5,14 @@ import qbs.TextFile
 Project {
     id: thunder
 
-    property string COMPANY_NAME: "FrostSpear"
+    property string COMPANY_NAME: "ThunderEngine"
     property string PRODUCT_NAME: "Hub"
     property string PRODUCT_VERSION: "2026.1"
     property string EDITOR_NAME: "WorldEditor"
 
     property string bundle: {
         if(qbs.targetOS.contains("darwin")) {
-            return PRODUCT_NAME + ".app/Contents/MacOS/"
+            return  "/" + PRODUCT_NAME + ".app/Contents"
         }
         return "";
     }
@@ -39,10 +39,10 @@ Project {
     property string RESOURCE_ROOT: "res"
 
     property string PREFIX: ""
-    property string PLATFORM_PATH: bundle + "hub"
+    property string PLATFORM_PATH: "hub"
     property string BIN_PATH: PLATFORM_PATH
-    property string QTPLUGINS_PATH: BIN_PATH + "/plugins"
-    property string QML_PATH: BIN_PATH + "/qml"
+    property string QTPLUGINS_PATH: BIN_PATH + bundle + "/plugins"
+    property string QML_PATH: BIN_PATH + bundle + "/qml"
 
     property stringList defines: {
         var result  = [

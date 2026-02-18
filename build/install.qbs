@@ -56,48 +56,46 @@ Product {
 
         files: {
             var list = [];
+            var libs = ["Core", "Gui", "Network", "OpenGL", "QmlCore", "Qml", "QmlMeta", "QmlModels", "QmlNetwork", "QmlWorkerScript",
+                        "QmlXmlListModel", "QuickControls2Basic", "QuickControls2BasicStyleImpl", "QuickControls2", "QuickControls2Impl",
+                        "Quick", "QuickDialogs2", "QuickDialogs2QuickImpl", "QuickDialogs2Utils", "QuickLayouts", "QuickTemplates2",
+                        "QuickWidgets", "Svg", "Xml", "Widgets"]
             if (!Qt.core.frameworkBuild) {
                 var libPrefix = (qbs.targetOS.contains("linux") ? "lib" : "") + "Qt" + Qt.core.versionMajor
                 var libPostfix = ((qbs.targetOS.contains("windows") && qbs.debugInformation) ? "d": "") + cpp.dynamicLibrarySuffix
-                var libs = ["Core", "Gui", "Network", "OpenGL", "QmlCore", "Qml", "QmlMeta", "QmlModels", "QmlNetwork", "QmlWorkerScript",
-                            "QmlXmlListModel", "QuickControls2Basic", "QuickControls2BasicStyleImpl", "QuickControls2", "QuickControls2Impl",
-                            "Quick", "QuickDialogs2", "QuickDialogs2QuickImpl", "QuickDialogs2Utils", "QuickLayouts", "QuickTemplates2",
-                            "QuickWidgets", "Svg", "Xml", "Widgets"]
                 if(qbs.targetOS.contains("linux")) {
-                    for(var it in libs) {
-                        list.push(libPrefix + libs[it] + libPostfix + "." + Qt.core.versionMajor + "." + Qt.core.versionMinor + "." + Qt.core.versionPatch)
-                        list.push(libPrefix + libs[it] + libPostfix + "." + Qt.core.versionMajor)
-                    }
-
                     list.push("libicudata.so.73", "libicudata.so.73.2")
                     list.push("libicui18n.so.73", "libicui18n.so.73.2")
                     list.push("libicuuc.so.73", "libicuuc.so.73.2")
 
-                    list.push(libPrefix + "DBus" + libPostfix + "." + Qt.core.versionMajor + "." + Qt.core.versionMinor + "." + Qt.core.versionPatch)
-                    list.push(libPrefix + "DBus" + libPostfix + "." + Qt.core.versionMajor)
+                    libs.push("DBus")
+                    libs.push("XcbQpa")
 
-                    list.push(libPrefix + "XcbQpa" + libPostfix + "." + Qt.core.versionMajor + "." + Qt.core.versionMinor + "." + Qt.core.versionPatch)
-                    list.push(libPrefix + "XcbQpa" + libPostfix + "." + Qt.core.versionMajor)
+                    for(var it in libs) {
+                        list.push(libPrefix + libs[it] + libPostfix + "." + Qt.core.versionMajor + "." + Qt.core.versionMinor + "." + Qt.core.versionPatch)
+                        list.push(libPrefix + libs[it] + libPostfix + "." + Qt.core.versionMajor)
+                    }
                 } else {
                     for(var it in libs) {
                         list.push(libPrefix + libs[it] + libPostfix)
                     }
                 }
             } else {
-                list.push("**/QtCore.framework/**")
-                list.push("**/QtXml.framework/**")
-                list.push("**/QtNetwork.framework/**")
-                list.push("**/QtQml.framework/**")
-                list.push("**/QtQuick.framework/**")
-                list.push("**/QtQuickWidgets.framework/**")
-                list.push("**/QtSvg.framework/**")
+                libs.push("DBus")
+                libs.push("XcbQpa")
+
+                var libPrefix = "**/Qt"
+                var libPostfix = ".framework/**"
+                for(var it in libs) {
+                    list.push(libPrefix + libs[it] + libPostfix)
+                }
             }
             return list
         }
         qbs.install: true
         qbs.installDir: {
             if(qbs.targetOS.contains("darwin")) {
-                return install.BIN_PATH + "/" + install.bundle + "../Frameworks/"
+                return install.BIN_PATH + "/" + install.bundle + "/Frameworks/"
             } else if(qbs.targetOS.contains("windows")) {
                 return install.BIN_PATH + "/" + install.bundle
             }
@@ -165,7 +163,12 @@ Product {
                 files.push("QtQuick/**/*.so")
                 files.push("QtQml/XmlListModel/**/*.so")
             } else {
-                files.push("*")
+                files.push("QtQml/WorkerScript/**/*.dylib")
+                files.push("QtQml/WorkerScript/**/plugins.qmltypes")
+                files.push("QtQml/WorkerScript/**/qmldir")
+
+                files.push("QtQuick/**/*.dylib")
+                files.push("QtQml/XmlListModel/**/*.dylib")
             }
             return files
         }
