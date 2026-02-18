@@ -125,11 +125,45 @@ jobs:
       with:
         name: ThundeHub.exe
         path: release/ThunderHub.exe
+        
+  osx:
+    name: MacOS
+    runs-on: macos-15
+    needs: version
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install Qt
+      run: |
+        sudo ./build/install-qt.sh --version ${QT_VERSION} qtbase qtsvg qtimageformats qtdeclarative qttools | tee -a $GITHUB_PATH
+        sudo ./build/install-qt.sh --version ${QTCREATOR_VERSION} qtcreator | tee -a $GITHUB_PATH
+
+    - name: Setup Qbs
+      run: |
+        qbs --version
+        qbs setup-toolchains --detect
+        qbs config defaultProfile xcode
+        qbs config --list
+
+    - name: Build Thunder Hub
+      run: |
+        qbs install --all-products config:release profile:xcode-macosx-arm64
+        7z a -t7z ThunderEngine-macosx-arm64.7z release/install-root
+
+    - name: Upload Thunder Hub
+      uses: actions/upload-artifact@v4
+      with:
+        name: ThunderEngine-macosx-arm64.7z
+        path: ThunderEngine-macosx-arm64.7z
     
   github:
     name: Upload to GitHub releases
     runs-on: ubuntu-latest
-    needs: [version, linux, windows]
+    needs: [version, linux, windows, osx]
 
     if: github.repository == 'thunder-engine/thunder' && needs.version.outputs.release == 'true'
 
@@ -162,9 +196,9 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ThunderHub-windows-x64.7z
-          asset_name: ThunderHub-windows-x64.7z
-          asset_content_type: application/x-7z-compressed
+          asset_path: ThundeHub.exe
+          asset_name: ThundeHub.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Upload Linux
         uses: actions/upload-release-asset@v1
@@ -172,4 +206,12 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ThunderHub-linux-x86_64.7z
           asset_name: ThunderHub-linux-x86_64.7z
+          asset_content_type: application/x-7z-compressed
+
+      - name: Upload OSX
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ThunderEngine-macosx-arm64.7z
+          asset_name: ThunderEngine-macosx-arm64.7z
           asset_content_type: application/x-7z-compressed
