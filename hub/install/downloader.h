@@ -5,7 +5,7 @@
 
 #include "extractor.h"
 
-class Sdk;
+struct Sdk;
 
 class QFile;
 class QNetworkAccessManager;

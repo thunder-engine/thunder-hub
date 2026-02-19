@@ -6,7 +6,7 @@ Project {
     id: thunder
 
     property string COMPANY_NAME: "ThunderEngine"
-    property string PRODUCT_NAME: "Hub"
+    property string PRODUCT_NAME: "ThunderHub"
     property string PRODUCT_VERSION: "2026.1"
     property string EDITOR_NAME: "WorldEditor"
 

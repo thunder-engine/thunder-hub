@@ -5,7 +5,7 @@
 #define MyAppName "Thunder Hub"
 #define MyAppVersion "2026.1"
 #define MyAppURL "https://thunderengine.org/"
-#define MyAppExeName "Hub.exe"
+#define MyAppExeName "ThunderHub.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
