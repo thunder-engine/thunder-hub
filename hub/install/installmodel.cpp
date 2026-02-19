@@ -19,6 +19,7 @@
 #include <QRegularExpression>
 
 #include "downloader.h"
+#include "settings.h"
 
 namespace {
     const char *gInstalls("Installs");
@@ -27,10 +28,6 @@ namespace {
     const char *gAssets("assets");
     const char *gUrl("browser_download_url");
 
-    const char *gWindows("windows");
-    const char *gLinux("linux");
-    const char *gMacOSX("macosx");
-
     const char *gName("name");
     const char *gSize("size");
 }
@@ -38,11 +35,16 @@ namespace {
 void Sdk::checkInstalled() {
     static const QStringList ignoreList = {".", "..", "include", "resources"};
     static const QMap<QString, QString> aliases = {
-        {"emscripten", "webgl"}
+        {"emscripten", "webgl"},
+        {"macos", "macosx"}
     };
 
     installed = QFileInfo::exists(path);
     root = QFileInfo(path).path() + "/../../../";
+
+#ifdef Q_OS_MACOS
+    root += "../../../";
+#endif
 
     QDirIterator it(root);
     while(it.hasNext()) {
@@ -190,15 +192,15 @@ void InstallModel::onUpdateCheckFinished() {
                 }
 
 #ifdef Q_OS_WINDOWS
-                if(m.platform == gWindows) {
+                if(m.platform == "windows") {
                     m.optional = false;
                 }
 #elif defined(Q_OS_LINUX)
-                if(m.platform == gLinux) {
+                if(m.platform == "linux") {
                     m.optional = false;
                 }
 #elif defined(Q_OS_MACOS)
-                if(m.platform == gMacOSX) {
+                if(m.platform == "macosx") {
                     m.optional = false;
                 }
 #endif
@@ -298,8 +300,15 @@ void InstallModel::locateSdk() {
     name += ".exe";
 #endif
 
-    QString path = QFileDialog::getOpenFileName(nullptr, tr("Locate the ") + EDITOR_NAME, "/", name);
+#ifdef Q_OS_MACOS
+    name += ".app";
+#endif
+
+    QString path = QFileDialog::getOpenFileName(nullptr, tr("Locate the ") + EDITOR_NAME, Settings::instance()->sdkDir(), name);
     if(!path.isEmpty()) {
+#ifdef Q_OS_MACOS
+        path += "/Contents/MacOS/WorldEditor";
+#endif
         QFileInfo info(path);
 
         QProcess probe(this);
@@ -391,7 +400,7 @@ void InstallModel::explorer(const QString &version) {
 
 #if defined(Q_OS_WIN)
     QProcess::startDetached("explorer.exe", { "/select,", QDir::toNativeSeparators(path) });
-#elif defined(Q_OS_MAC)
+#elif defined(Q_OS_MACOS)
     QStringList scriptArgs;
     scriptArgs << QLatin1String("-e")
                << QString::fromLatin1("tell application \"Finder\" to reveal POSIX file \"%1\"")
