@@ -3,7 +3,6 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QDir>
-#include <QImage>
 #include <QFileDialog>
 #include <QProcess>
 #include <QDirIterator>
@@ -38,6 +37,19 @@ void Sdk::checkInstalled() {
         {"emscripten", "webgl"},
         {"macos", "macosx"}
     };
+
+    if(path.isEmpty()) {
+        path = Settings::instance()->sdkDir() + "/" + version;
+#ifdef Q_OS_WINDOWS
+        path += "/windows/x86_64/bin/WorldEditor.exe";
+#endif
+#ifdef Q_OS_LINUX
+        path += "/linux/x86_64/bin/WorldEditor";
+#endif
+#ifdef Q_OS_MACOS
+        path += "/macos/arm64/WorldEditor.app/Contents/MacOS/WorldEditor";
+#endif
+    }
 
     installed = QFileInfo::exists(path);
     root = QFileInfo(path).path() + "/../../../";
@@ -345,7 +357,7 @@ void InstallModel::updateSdk(const QString &version, const QStringList &modules)
     if(sdk) {
         QStringList downloads;
         for(auto &it : sdk->modules) {
-            if(modules.contains(it.platform)) {
+            if(modules.contains(it.platform) || !it.optional) {
                 if(it.installed) {
                     continue;
                 }
@@ -354,7 +366,8 @@ void InstallModel::updateSdk(const QString &version, const QStringList &modules)
         }
 
         static const QMap<QString, QString> aliases = {
-            {"webgl", "emscripten"}
+            {"webgl", "emscripten"},
+            {"macosx", "macos"}
         };
         for(auto &it : sdk->modules) {
             if(!modules.contains(it.platform)) {
