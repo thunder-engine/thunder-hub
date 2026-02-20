@@ -133,6 +133,16 @@ Product {
     }
 
     Group {
+        name: "Qt TLS Plugins"
+        prefix: FileInfo.joinPaths(Qt.core.pluginPath, "/tls/")
+        files: pluginFiles
+        excludeFiles: pluginExcludeFiles
+        qbs.install: true
+        qbs.installDir: install.QTPLUGINS_PATH + "/tls"
+        qbs.installPrefix: install.PREFIX
+    }
+
+    Group {
         name: "Qt XCB Integrations Plugins"
         condition: qbs.targetOS.contains("linux")
         prefix: FileInfo.joinPaths(Qt.core.pluginPath, "/xcbglintegrations/")
