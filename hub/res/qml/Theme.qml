@@ -2,15 +2,18 @@ import QtQuick
 import QtQuick.Controls
 
 Item {
-    property string textColor: "#ffffff"
+    property string panelLight: "#60000000"
+    property string panelLightHover: "#30000000"
 
-    property string panel: "#60000000"
-    property string hoverPanel: "#30000000"
+    property string panelDark: "#22ffffff"
+    property string panelDarkHover: "#32ffffff"
 
-    property string grey: "#606060"
+    property string white: "#ffffff"
+
+    property string grey: "#404040"
     property string greyLight: "#8d8d8d"
-    property string greyDark: "#363636"
-    property string greyHover: "#404040"
+    property string greyDark: "#222222"
+    property string greyHover: "#606060"
 
     property string blue: "#0277bd"
     property string blueLight: "#58a5f0"
@@ -28,6 +31,21 @@ Item {
     property string redHover: "#d32f2f"
 
     property int frameRadius: 4
+    property string frameBorder: greyLight
+    property string frameColor: grey
+    property string frameColorHover: greyHover
+
+    property string itemColor: panelDark
+    property string itemColorHover: panelDarkHover
+
+    property string accentColor: blue
+    property string accentColorHover: blueLight
+
+    property string textColor: white
+    property string textColorDiabled: greyLight
+
+    property string background: greyDark
+    property string modalBackground: panelDark
 
     property int textSize: 14
     property int h1: 28

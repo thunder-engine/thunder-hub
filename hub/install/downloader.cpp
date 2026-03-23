@@ -114,7 +114,7 @@ void Downloader::onDownloadFinished() {
 
 void Downloader::onExtractFinished() {
     if(!m_extractComponents.isEmpty()) {
-        m_extractor.extract(m_extractComponents.takeFirst(), Settings::instance()->sdkDir());
+        m_extractor.extract(m_extractComponents.takeFirst(), Settings::instance()->sdkDir(), m_sdk->version);
     } else {
         m_sdk->progress = -1;
         m_sdk->status.clear();

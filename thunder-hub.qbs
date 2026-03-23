@@ -19,18 +19,9 @@ Project {
 
     Probe {
         id: probe
-        property string REVISION
         property string YEAR
         configure: {
             YEAR = new Date().getFullYear().toString()
-            REVISION = "develop"
-            var p = new Process()
-            p.setWorkingDirectory(thunder.sourceDirectory)
-            if (p.exec("git", ["rev-parse", "HEAD"]) === 0) {
-                REVISION = p.readStdOut().trim()
-            } else {
-                console.error(p.readStdErr())
-            }
         }
     }
 
@@ -50,9 +41,7 @@ Project {
             "PRODUCT_NAME=\"" + PRODUCT_NAME + "\"",
             "PRODUCT_VERSION=\"" + PRODUCT_VERSION + "\"",
             "EDITOR_NAME=\"" + EDITOR_NAME + "\"",
-            "COPYRIGHT_YEAR=" + COPYRIGHT_YEAR,
-            "REVISION=\"" + probe.REVISION + "\"",
-            "LEGAL=\"" + probe.LEGAL + "\""
+            "COPYRIGHT_YEAR=" + COPYRIGHT_YEAR
         ];
         return result;
     }

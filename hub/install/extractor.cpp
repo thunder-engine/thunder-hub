@@ -25,9 +25,10 @@ Extractor::~Extractor() {
     m_thread.wait();
 }
 
-void Extractor::extract(const QString archiveName, const QString outputPath) {
+void Extractor::extract(const QString &archiveName, const QString &outputPath, const QString &version) {
     m_archiveName = archiveName;
     m_outputPath = outputPath;
+    m_version = version;
 
     m_thread.start();
 }
@@ -89,10 +90,17 @@ void Extractor::doWork() {
         SzArEx_GetFileNameUtf16(&db, i, temp);
 
         QString sub(QString::fromUtf16(temp));
-        sub.remove("sdk/");
-        sub.remove("install-root/");
-        sub.remove("release/");
-        QString path(m_outputPath + "/" + sub);
+        QStringList list = sub.split('/', Qt::SkipEmptyParts);
+        list.removeOne("sdk");
+        list.removeOne("install-root");
+        list.removeOne("release");
+        if(list.isEmpty()) {
+            continue;
+        }
+
+        list.front() = m_version;
+
+        QString path(m_outputPath + "/" + list.join('/'));
 
         if(isDir) {
             QDir dir;

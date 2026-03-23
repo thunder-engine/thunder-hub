@@ -17,6 +17,6 @@ MenuItem {
         anchors.leftMargin: 1
         anchors.rightMargin: 1
 
-        color: parent.highlighted ? theme.greyHover : "transparent"
+        color: parent.highlighted ? theme.itemColorHover : theme.itemColor
     }
 }

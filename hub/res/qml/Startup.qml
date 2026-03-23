@@ -3,10 +3,11 @@ import QtQuick.Controls.Basic
 import QtQuick.Window
 
 import "qrc:/qml/."
+import "qrc:/qml/components/."
 
 Window {
     id: rect
-    color: theme.grey
+    color: theme.background
     width: 1280
     height: 720
     visible: true
@@ -18,7 +19,7 @@ Window {
     Rectangle {
         id: leftPanel
         width: 200
-        color: theme.panel
+        color: theme.itemColor
         anchors.bottom: parent.bottom
         anchors.top: parent.top
         anchors.left: parent.left
@@ -42,6 +43,21 @@ Window {
                 source: "qrc:/icons/thunderlight.svg"
             }
 
+            Text {
+                id: label
+
+                anchors.left: image.right
+                anchors.bottom: image.bottom
+                anchors.leftMargin: 10
+
+                text: "Hub"
+
+                font.bold: true
+                font.pixelSize: theme.h1
+                verticalAlignment: Text.AlignBottom
+                color: theme.textColor
+            }
+
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
@@ -62,95 +78,30 @@ Window {
             anchors.rightMargin: 10
             anchors.leftMargin: 10
 
-            RadioButton {
+            SideButton {
                 checked: true
                 text: qsTr("Projects")
-                indicator: Rectangle {
-                    width: 4
-                    height: parent.height
-                    visible: parent.checked
-                    color: theme.blue
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.pixelSize: theme.h2
-                    color: parent.checked ? theme.textColor : theme.greyLight
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                }
-                onClicked: pageLoader.source = "Projects.qml"
+                source: "Projects.qml"
             }
 
-            RadioButton {
+            SideButton {
                 text: qsTr("Installs")
-                indicator: Rectangle {
-                    width: 4
-                    height: parent.height
-                    visible: parent.checked
-                    color: theme.blue
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.pixelSize: theme.h2
-                    color: parent.checked ? theme.textColor : theme.greyLight
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                }
-                onClicked: pageLoader.source = "Installs.qml"
+                source: "Installs.qml"
             }
 /*
-            RadioButton {
+            SideButton {
                 text: qsTr("Learn")
-                indicator: Rectangle {
-                    width: 4
-                    height: parent.height
-                    visible: parent.checked
-                    color: theme.blue
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.pixelSize: theme.h2
-                    color: parent.checked ? theme.textColor : theme.greyLight
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                }
-                onClicked: pageLoader.source = "Learn.qml"
-            }
-
-            RadioButton {
-                text: qsTr("Blog")
-                indicator: Rectangle {
-                    width: 4
-                    height: parent.height
-                    visible: parent.checked
-                    color: theme.blue
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.pixelSize: theme.h2
-                    color: parent.checked ? theme.textColor : theme.greyLight
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                }
-                onClicked: pageLoader.source = "Blog.qml"
+                source: "Learn.qml"
             }
 */
-            RadioButton {
+            SideButton {
+                text: qsTr("Blog")
+                source: "Blog.qml"
+            }
+
+            SideButton {
                 text: qsTr("Settings")
-                indicator: Rectangle {
-                    width: 4
-                    height: parent.height
-                    visible: parent.checked
-                    color: theme.blue
-                }
-                contentItem: Text {
-                    text: parent.text
-                    font.pixelSize: theme.h2
-                    color: parent.checked ? theme.textColor : theme.greyLight
-                    verticalAlignment: Text.AlignVCenter
-                    leftPadding: 10
-                }
-                onClicked: pageLoader.source = "Settings.qml"
+                source: "Settings.qml"
             }
         }
     }
