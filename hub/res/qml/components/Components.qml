@@ -7,7 +7,7 @@ Rectangle {
 
     anchors.fill: parent
 
-    color: theme.hoverPanel
+    color: theme.modalBackground
 
     property string version: ""
     property var modules: []
@@ -23,9 +23,8 @@ Rectangle {
         anchors.centerIn: parent
 
         radius: theme.frameRadius
-        color: theme.greyDark
-        border.color: theme.greyLight
-
+        color: theme.frameColor
+        border.color: theme.frameBorder
 
         ColumnLayout {
             anchors.fill: parent
@@ -59,7 +58,7 @@ Rectangle {
                     background: Rectangle {
                         anchors.fill: parent
                         radius: theme.frameRadius
-                        color: parent.hovered ? theme.greyHover : theme.grey
+                        color: parent.hovered ? theme.frameColorHover : theme.frameColor
                     }
 
                     Shortcut {
@@ -74,7 +73,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: theme.greyLight
+                color: theme.frameBorder
             }
 
             ListView {
@@ -133,7 +132,7 @@ Rectangle {
             Rectangle {
                 Layout.fillWidth: true
                 height: 1
-                color: theme.greyLight
+                color: theme.frameBorder
             }
 
             RowLayout {
@@ -150,7 +149,7 @@ Rectangle {
                     background: Rectangle {
                         anchors.fill: parent
                         radius: theme.frameRadius
-                        color: parent.hovered ? theme.blueHover : theme.blue
+                        color: parent.hovered ? theme.accentColorHover : theme.accentColor
                     }
 
                     contentItem: Text {
@@ -178,7 +177,7 @@ Rectangle {
                     background: Rectangle {
                         anchors.fill: parent
                         radius: theme.frameRadius
-                        color: parent.hovered ? theme.greyHover : theme.grey
+                        color: parent.hovered ? theme.frameColorHover : theme.frameColor
                     }
 
                     contentItem: Text {

@@ -41,13 +41,13 @@ void Sdk::checkInstalled() {
     if(path.isEmpty()) {
         path = Settings::instance()->sdkDir() + "/" + version;
 #ifdef Q_OS_WINDOWS
-        path += "/windows/x86_64/bin/WorldEditor.exe";
+        path += QString("/windows/x86_64/bin/") + EDITOR_NAME + ".exe";
 #endif
 #ifdef Q_OS_LINUX
-        path += "/linux/x86_64/bin/WorldEditor";
+        path += QString("/linux/x86_64/bin/") + EDITOR_NAME;
 #endif
 #ifdef Q_OS_MACOS
-        path += "/macos/arm64/WorldEditor.app/Contents/MacOS/WorldEditor";
+        path += QString("/macos/arm64/") + EDITOR_NAME + ".app/Contents/MacOS/" + EDITOR_NAME;
 #endif
     }
 
@@ -128,7 +128,7 @@ int InstallModel::rowCount(const QModelIndex &parent) const {
 
     int count = 0;
     for(auto &it : m_sdk) {
-        if(it.installed) {
+        if(it.installed || it.progress != -1) {
             count++;
         }
     }
@@ -140,7 +140,7 @@ QVariant InstallModel::data(const QModelIndex &index, int role) const {
     if(index.isValid()) {
         int idx = -1;
         for(auto &it : m_sdk) {
-            if(it.installed) {
+            if(it.installed || it.progress != -1) {
                 idx++;
                 if(idx == index.row()) {
                     QFileInfo info(it.path);
@@ -319,7 +319,7 @@ void InstallModel::locateSdk() {
     QString path = QFileDialog::getOpenFileName(nullptr, tr("Locate the ") + EDITOR_NAME, Settings::instance()->sdkDir(), name);
     if(!path.isEmpty()) {
 #ifdef Q_OS_MACOS
-        path += "/Contents/MacOS/WorldEditor";
+        path += QString("/Contents/MacOS/") + EDITOR_NAME;
 #endif
         QFileInfo info(path);
 
@@ -433,15 +433,14 @@ void InstallModel::commitInstallRecord() {
 
     QStringList values;
     foreach(auto &it, m_sdk) {
-        if(it.installed) {
+        if(it.installed || it.progress != -1) {
             values << it.path + ";" + it.version;
         }
     }
     values.removeDuplicates();
     settings.setValue(gInstalls, values);
 
-    emit layoutAboutToBeChanged();
-    emit layoutChanged();
+    onJobUpdated();
 }
 
 void InstallModel::onJobFinished() {
@@ -451,8 +450,7 @@ void InstallModel::onJobFinished() {
         job->deleteLater();
     }
 
-    emit layoutAboutToBeChanged();
-    emit layoutChanged();
+    onJobUpdated();
 }
 
 void InstallModel::onJobUpdated() {

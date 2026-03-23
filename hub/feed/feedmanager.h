@@ -1,32 +1,49 @@
 #ifndef FEEDMANAGER_H
 #define FEEDMANAGER_H
 
-#include <QObject>
+#include <QAbstractListModel>
 
 class QNetworkAccessManager;
-class QNetworkReply;
+class QDomNode;
 
-class FeedManager : public QObject {
+struct RssItem {
+    QString title;
+    QString description;
+    QString link;
+    QString category;
+    QString media;
+};
+
+class FeedManager : public QAbstractListModel {
     Q_OBJECT
 
-    Q_PROPERTY(QString blogFeed READ blogFeed NOTIFY blogFeedChanged)
+    enum Roles {
+        Title,
+        Brief,
+        Link,
+        Media
+    };
 
 public:
     explicit FeedManager(QObject *parent = nullptr);
     ~FeedManager();
 
-    QString blogFeed() const;
-
-signals:
-    void blogFeedChanged();
-
 private slots:
     void onUpdateCheckFinished();
 
 private:
+    QString extractTextFromNode(const QDomNode &node);
+
+    int rowCount(const QModelIndex &parent) const override;
+
+    QVariant data(const QModelIndex &index, int role) const override;
+
+    QHash<int, QByteArray> roleNames() const override;
+
+private:
     QNetworkAccessManager *m_manager;
 
-    QString m_blogData;
+    QList<RssItem> m_items;
 
 };
 

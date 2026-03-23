@@ -18,5 +18,6 @@
         <file>qml/components/StyledPathEdit.qml</file>
         <file>icons/close.png</file>
         <file>icons/folder.png</file>
+        <file>qml/components/SideButton.qml</file>
     </qresource>
 </RCC>

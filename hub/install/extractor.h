@@ -10,7 +10,7 @@ public:
     explicit Extractor(QObject *parent = 0);
     ~Extractor();
 
-    void extract(const QString archiveName, const QString outputPath);
+    void extract(const QString &archiveName, const QString &outputPath, const QString &version);
 
 signals:
     void extractProgress(qint64 filesExtracted, qint64 filesTotal);
@@ -24,6 +24,7 @@ private:
 
     QString m_archiveName;
     QString m_outputPath;
+    QString m_version;
 
 };
 

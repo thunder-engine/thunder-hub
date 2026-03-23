@@ -14,9 +14,9 @@ ToolButton {
     }
 
     background: Rectangle {
-        color: parent.hovered ? theme.hoverPanel : theme.panel
+        color: parent.hovered ? theme.frameColorHover : theme.frameColor
         radius: theme.frameRadius
-        border.color: theme.greyLight
+        border.color: theme.frameBorder
     }
 
     contentItem: Row {

@@ -32,6 +32,6 @@ Item {
         anchors.topMargin: 10
 
         height: 1
-        color: theme.blue
+        color: theme.accent
     }
 }

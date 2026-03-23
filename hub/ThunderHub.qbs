@@ -24,7 +24,7 @@ Project {
         Depends { name: "cpp" }
         Depends { name: "bundle" }
         Depends { name: "7zip" }
-        Depends { name: "Qt"; submodules: ["core", "quickwidgets", "network"]; }
+        Depends { name: "Qt"; submodules: ["core", "quickwidgets", "network", "xml"]; }
         property bool isBundle: qbs.targetOS.contains("darwin") && bundle.isBundle
         bundle.infoPlist: ({
             "NSHumanReadableCopyright": "(C) 2007-" + ThunderHub.COPYRIGHT_YEAR + " by " + ThunderHub.COPYRIGHT_AUTHOR

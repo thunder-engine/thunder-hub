@@ -42,7 +42,7 @@ Item {
             background: Rectangle {
                 anchors.fill: parent
                 radius: theme.frameRadius
-                color: parent.hovered ? theme.blueLight : theme.blue
+                color: parent.hovered ? theme.accentColorHover : theme.accentColor
             }
 
             contentItem: Row {
@@ -79,7 +79,7 @@ Item {
             background: Rectangle {
                 anchors.fill: parent
                 radius: theme.frameRadius
-                color: parent.hovered ? theme.hoverPanel : theme.panel
+                color: parent.hovered ? theme.frameColorHover : theme.frameColor
             }
 
             contentItem: Text {
@@ -101,7 +101,7 @@ Item {
         anchors.topMargin: 10
 
         height: 1
-        color: theme.blue
+        color: theme.accentColor
     }
 
     ListView {
@@ -130,11 +130,10 @@ Item {
                     Layout.fillHeight: true
 
                     radius: theme.frameRadius
-                    color: "transparent"
+                    color: theme.itemColor
 
                     Row {
-                        anchors.leftMargin: 20
-                        anchors.topMargin: 5
+                        anchors.margins: 5
                         spacing: 20
                         anchors.fill: parent
 
@@ -166,8 +165,8 @@ Item {
                         anchors.fill: parent
                         hoverEnabled: true
                         onClicked: projectsManager.openProject(path)
-                        onEntered: parent.color = theme.hoverPanel
-                        onExited: parent.color = "transparent"
+                        onEntered: parent.color = theme.itemColorHover
+                        onExited: parent.color = theme.itemColor
                     }
                 }
 
@@ -183,7 +182,7 @@ Item {
                     background: Rectangle {
                         anchors.fill: parent
                         radius: theme.frameRadius
-                        color: parent.hovered ? theme.hoverPanel : "transparent"
+                        color: parent.hovered ? theme.itemColorHover : theme.itemColor
                     }
 
                     onClicked: itemContextMenu.open()
@@ -196,9 +195,9 @@ Item {
                         width: 150
 
                         background: Rectangle {
-                            color: theme.greyDark
+                            color: theme.frameColor
                             radius: theme.frameRadius
-                            border.color: theme.greyLight
+                            border.color: theme.frameBorder
                         }
 
                         MenuSeparator {
