@@ -47,7 +47,7 @@ void Sdk::checkInstalled() {
         path += QString("/linux/x86_64/bin/") + EDITOR_NAME;
 #endif
 #ifdef Q_OS_MACOS
-        path += QString("/macos/arm64/") + EDITOR_NAME + ".app/Contents/MacOS/" + EDITOR_NAME";
+        path += QString("/macos/arm64/") + EDITOR_NAME + ".app/Contents/MacOS/" + EDITOR_NAME;
 #endif
     }
 
