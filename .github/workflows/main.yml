@@ -225,3 +225,4 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ThunderHub.dmg
           asset_name: ThunderHub.dmg
+          asset_content_type: application/x-apple-diskimage
