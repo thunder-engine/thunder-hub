@@ -189,7 +189,7 @@ jobs:
         id: download-windows
         uses: actions/download-artifact@v4
         with:
-          name: ThundeHub.exe
+          name: ThunderHub.exe
 
       - name: Download Linux binaries
         id: download-linux
@@ -207,8 +207,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ThundeHub.exe
-          asset_name: ThundeHub.exe
+          asset_path: ThunderHub.exe
+          asset_name: ThunderHub.exe
           asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Upload Linux
