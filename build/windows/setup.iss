@@ -3,7 +3,7 @@
 ; Non-commercial use only
 
 #define MyAppName "Thunder Hub"
-#define MyAppVersion "2026.1"
+#define MyAppVersion "2026.2"
 #define MyAppURL "https://thunderengine.org/"
 #define MyAppExeName "ThunderHub.exe"
 

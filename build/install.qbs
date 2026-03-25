@@ -44,6 +44,14 @@ Product {
         return files;
     }
 
+    property var tlsExcludeFiles: {
+        var files = ["*.pdb"];
+        if (!(qbs.targetOS.contains("windows") && qbs.debugInformation)) {
+            files.push("**/*dd.dll");
+        }
+        return files;
+    }
+
     Group {
         name: "Qt DLLs"
         prefix: {
@@ -136,7 +144,7 @@ Product {
         name: "Qt TLS Plugins"
         prefix: FileInfo.joinPaths(Qt.core.pluginPath, "/tls/")
         files: pluginFiles
-        excludeFiles: pluginExcludeFiles
+        excludeFiles: tlsExcludeFiles
         qbs.install: true
         qbs.installDir: install.QTPLUGINS_PATH + "/tls"
         qbs.installPrefix: install.PREFIX
