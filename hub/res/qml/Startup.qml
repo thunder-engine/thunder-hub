@@ -104,6 +104,80 @@ Window {
                 source: "Settings.qml"
             }
         }
+
+        Rectangle {
+            id: versionDlg
+
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 10
+            height: 150
+            radius: theme.frameRadius
+            color: theme.accentColor
+            visible: false
+
+            property string version: ""
+
+            Column {
+                anchors.fill: parent
+                anchors.margins: 10
+                anchors.topMargin: 30
+                spacing: 10
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    text: qsTr("Hub update available")
+
+                    font.bold: true
+                    font.pixelSize: theme.textSize
+                    color: theme.textColor
+                }
+
+                Text {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+
+                    text: qsTr("Hub %1 now available for download").arg(versionDlg.version)
+                    wrapMode: Text.WordWrap
+                    font.pixelSize: theme.textSize
+                    color: theme.textColor
+                }
+
+                ToolButton {
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    text: qsTr("Download")
+
+                    background: Rectangle {
+                        anchors.fill: parent
+                        radius: theme.frameRadius
+                        border.color: theme.frameBorder
+                        color: parent.hovered ? theme.itemColorHover : theme.itemColor
+                    }
+
+                    contentItem: Text {
+                        text: parent.text
+                        color: theme.textColor
+                        font.pixelSize: theme.textSize
+                        verticalAlignment: Text.AlignVCenter
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    onClicked: Qt.openUrlExternally("https://github.com/thunder-engine/thunder-hub/releases/tag/" + versionDlg.version)
+                }
+            }
+
+            Connections {
+                target: updateManager
+                function onUpdateAvailable(data) {
+                    versionDlg.version = data
+                    versionDlg.visible = true
+                }
+            }
+        }
     }
 
     Item {
