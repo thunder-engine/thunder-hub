@@ -49,7 +49,7 @@ Project {
 
         Properties {
             condition: qbs.targetOS.contains("linux")
-            cpp.rpaths: "$ORIGIN"
+            cpp.rpaths: "$ORIGIN/../lib"
         }
 
         Properties {
