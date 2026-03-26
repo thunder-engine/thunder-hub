@@ -103,11 +103,9 @@ Product {
         qbs.install: true
         qbs.installDir: {
             if(qbs.targetOS.contains("darwin")) {
-                return install.BIN_PATH + "/" + install.bundle + "/Frameworks/"
-            } else if(qbs.targetOS.contains("windows")) {
-                return install.BIN_PATH + "/" + install.bundle
+                return install.BIN_PATH + "/Frameworks/"
             }
-            return install.LIB_PATH
+            return install.BIN_PATH
         }
         qbs.installPrefix: install.PREFIX
 
