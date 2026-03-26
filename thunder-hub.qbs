@@ -33,7 +33,7 @@ Project {
     property string PLATFORM_PATH: "hub"
     property string BIN_PATH: PLATFORM_PATH + bundle
     property string QTPLUGINS_PATH: BIN_PATH + "/plugins"
-    property string QML_PATH: BIN_PATH + bundle + "/qml"
+    property string QML_PATH: BIN_PATH + "/qml"
 
     property stringList defines: {
         var result  = [

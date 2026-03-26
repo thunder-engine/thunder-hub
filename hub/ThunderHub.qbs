@@ -61,7 +61,7 @@ Project {
         Group {
             name: "Install " + ThunderHub.PRODUCT_NAME
             qbs.install: true
-            qbs.installDir: ThunderHub.BIN_PATH
+            qbs.installDir: isBundle ? ThunderHub.BIN_PATH + "/../.." : ThunderHub.BIN_PATH
             qbs.installPrefix: ThunderHub.PREFIX
 
             fileTagsFilter: isBundle ? ["bundle.content"] : ["application"]
