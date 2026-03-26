@@ -105,7 +105,7 @@ Product {
             if(qbs.targetOS.contains("darwin")) {
                 return install.BIN_PATH + "/Frameworks/"
             } else if(qbs.targetOS.contains("linux")) {
-                return install.BIN_PATH + "/../lib"
+                return install.BIN_PATH + "/lib"
             }
             return install.BIN_PATH
         }
@@ -196,5 +196,18 @@ Product {
         qbs.installDir: install.QML_PATH
         qbs.installPrefix: install.PREFIX
         qbs.installSourceBase: prefix
+    }
+
+    Group {
+        name: "Qt Config"
+        files: {
+            if(qbs.targetOS.contains("linux")) {
+                return "linux/qt.conf"
+            }
+            return ""
+        }
+        qbs.install: true
+        qbs.installDir: install.BIN_PATH
+        qbs.installPrefix: install.PREFIX
     }
 }
